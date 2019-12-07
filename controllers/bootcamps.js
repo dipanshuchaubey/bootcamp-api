@@ -31,10 +31,10 @@ exports.getBootcamps = asyncHandler(async (req, res, next) => {
   // Convert the query string into JSON Object
   let result = Bootcamp.find(JSON.parse(query));
 
-  // Select query Logic
+  // Select & Sort query Logic
   if (req.query.select) {
     const advQuery = req.query.select.split(',').join(' ');
-    result = result.select(advQuery);
+    result = result.select(advQuery).sort(req.query.sort);
   }
 
   // Sort query Logic
