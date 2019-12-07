@@ -29,7 +29,7 @@ exports.getBootcamps = asyncHandler(async (req, res, next) => {
   query = query.replace(/gt|gte|lt|lte|in/g, match => `$${match}`);
 
   // Convert the query string into JSON Object
-  let result = Bootcamp.find(JSON.parse(query));
+  let result = Bootcamp.find(JSON.parse(query)).populate('courses');
 
   // Select & Sort query Logic
   if (req.query.select) {
