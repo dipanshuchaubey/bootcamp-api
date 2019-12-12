@@ -1,3 +1,4 @@
+const path = require('path');
 const Bootcamp = require('../models/Bootcamp');
 const geocoder = require('../utils/geocoder');
 const ErrorResponse = require('../utils/ErrorResponse');
@@ -29,7 +30,10 @@ exports.getBootcamps = asyncHandler(async (req, res, next) => {
   query = query.replace(/gt|gte|lt|lte|in/g, match => `$${match}`);
 
   // Convert the query string into JSON Object
-  let result = Bootcamp.find(JSON.parse(query)).populate({path: 'courses', select: 'title description'});
+  let result = Bootcamp.find(JSON.parse(query)).populate({
+    path: 'courses',
+    select: 'title description'
+  });
 
   // Select & Sort query Logic
   if (req.query.select) {
@@ -170,7 +174,62 @@ exports.deleteBootcamp = asyncHandler(async (req, res, next) => {
     );
   }
 
-  bootcamp.remove();
+  await bootcamp.remove();
 
   res.status(200).json({ success: true, data: 'Deleted successfully' });
+});
+
+/**
+ * @desc        Add bootcamp image
+ * @route       /api/v1/bootcamps/:id/image
+ * @access      Private
+ */
+
+exports.uploadBootcampPhoto = asyncHandler(async (req, res, next) => {
+  const file = req.files.file;
+
+  const bootcamp = await Bootcamp.findById(req.params.id);
+
+  if (!bootcamp) {
+    return next(new ErrorResponse('Bootcamp does not exists', 400));
+  }
+
+  if (!file) {
+    return next(new ErrorResponse('Please upload a photo', 404));
+  }
+
+  // Check if uploaded file is image
+  if (!file.mimetype.startsWith('image')) {
+    return next(new ErrorResponse('Please a file type image', 400));
+  }
+
+  // Check file size
+  if (file.size > process.env.MAX_FILE_UPLOAD_SIZE) {
+    return next(
+      new ErrorResponse(
+        `Image size should be less ${process.env.MAX_FILE_UPLOAD_SIZE}`,
+        400
+      )
+    );
+  }
+
+  // Set custom file name
+  file.name = `photo_${bootcamp._id}${path.extname(file.name)}`;
+
+  console.log(file.name);
+
+  file.mv(`${process.env.FILE_UPLOAD_PATH}/${file.name}`, async err => {
+    try {
+      await Bootcamp.findByIdAndUpdate(req.params.id, { photo: file.name });
+
+      res.status(200).json({
+        success: true,
+        data: `Photo ${file.name} uploaded successfully`
+      });
+    } catch (err) {
+      return next(
+        new ErrorResponse('Error - Problem with uploading file', 500)
+      );
+    }
+  });
 });

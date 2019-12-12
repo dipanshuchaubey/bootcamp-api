@@ -62,7 +62,7 @@ exports.createCourse = asyncHandler(async (req, res, next) => {
     return next(new ErrorResponse('Bootcamp does not exists', 404));
   }
 
-  const course = Course.create(req.body);
+  const course = await Course.create(req.body);
 
   res.status(201).json({ success: true, data: course });
 });
@@ -93,11 +93,13 @@ exports.updateCourse = asyncHandler(async (req, res, next) => {
  */
 
 exports.deleteCourse = asyncHandler(async (req, res, next) => {
-  const course = await Course.findByIdAndDelete(req.params.id);
+  const course = await Course.findById(req.params.id);
 
   if (!course) {
     return next(new ErrorResponse('Course does not exists', 404));
   }
+
+  await course.remove();
 
   res.status(200).json({ success: true, data: 'Course deleted successfully' });
 });

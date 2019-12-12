@@ -57,4 +57,7 @@ if (process.argv[2] === '-i') {
   importData();
 } else if (process.argv[2] === '-r') {
   deleteData();
+} else {
+  console.log('Method not available');
+  process.exit();
 }
