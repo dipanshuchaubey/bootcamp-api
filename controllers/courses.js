@@ -54,8 +54,10 @@ exports.getSingleCourse = asyncHandler(async (req, res, next) => {
  */
 
 exports.createCourse = asyncHandler(async (req, res, next) => {
+  // Set bootcamp equals to bootcampId as passed into params
   req.body.bootcamp = req.params.bootcampId;
 
+  // Check if bootcamp exists
   const bootcamp = await Bootcamp.findById(req.params.bootcampId);
 
   if (!bootcamp) {
