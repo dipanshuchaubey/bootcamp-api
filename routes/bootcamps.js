@@ -15,12 +15,21 @@ const router = express.Router();
 // Include other resources router
 const CoursesRouter = require('./courses');
 
+const Bootcamp = require('../models/Bootcamp');
+const advancedResult = require('../middleware/advancedResult');
+
 // Re-router to other resource router
 router.use('/:bootcampId/courses', CoursesRouter);
 
 router
   .route('/')
-  .get(getBootcamps)
+  .get(
+    advancedResult(Bootcamp, {
+      path: 'courses',
+      select: 'title description'
+    }),
+    getBootcamps
+  )
   .post(createBootcamp);
 
 router
