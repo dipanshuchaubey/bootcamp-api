@@ -7,7 +7,7 @@ const asyncHandler = require('../middleware/asyncHandler');
 /**
  * Fetch all the bootcamps
  * @desc        Get all bootcamps
- * @route       /api/v1/bootcamps
+ * @route       GET /api/v1/bootcamps
  * @access      Public
  */
 
@@ -83,7 +83,7 @@ exports.getBootcamps = asyncHandler(async (req, res, next) => {
 
 /**
  * @desc        Get single bootcamp
- * @route       /api/v1/bootcamps/:id
+ * @route       GET /api/v1/bootcamps/:id
  * @access      Public
  */
 
@@ -101,7 +101,7 @@ exports.getBootcamp = asyncHandler(async (req, res, next) => {
 
 /**
  * @desc        Get bootcamp within a redius
- * @route       /api/v1/bootcamps/redius/:zipcode/:distance
+ * @route       GET /api/v1/bootcamps/redius/:zipcode/:distance
  * @access      Public
  */
 exports.getBootcampsInRadius = asyncHandler(async (req, res, next) => {
@@ -128,7 +128,7 @@ exports.getBootcampsInRadius = asyncHandler(async (req, res, next) => {
 
 /**
  * @desc        create new bootcamp
- * @route       /api/v1/bootcamps
+ * @route       POST /api/v1/bootcamps
  * @access      Private
  */
 
@@ -140,7 +140,7 @@ exports.createBootcamp = asyncHandler(async (req, res, next) => {
 
 /**
  * @desc        Update bootcamp
- * @route       /api/v1/bootcamps/:id
+ * @route       PUT /api/v1/bootcamps/:id
  * @access      Private
  */
 
@@ -161,7 +161,7 @@ exports.updateBootcamp = asyncHandler(async (req, res, next) => {
 
 /**
  * @desc        Delete bootcamp
- * @route       /api/v1/bootcamps/:id
+ * @route       DELETE /api/v1/bootcamps/:id
  * @access      Private
  */
 
@@ -181,7 +181,7 @@ exports.deleteBootcamp = asyncHandler(async (req, res, next) => {
 
 /**
  * @desc        Add bootcamp image
- * @route       /api/v1/bootcamps/:id/image
+ * @route       PUT /api/v1/bootcamps/:id/image
  * @access      Private
  */
 

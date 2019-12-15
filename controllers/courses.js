@@ -5,8 +5,8 @@ const ErrorResponse = require('../utils/ErrorResponse');
 
 /**
  * @desc        Get courses
- * @route       /api/v1/courses
- * @route       /api/v1/bootcamp/:bootcampId/courses
+ * @route       GET /api/v1/courses
+ * @route       GET /api/v1/bootcamp/:bootcampId/courses
  * @access      Public
  */
 
