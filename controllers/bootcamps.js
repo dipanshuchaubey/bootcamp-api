@@ -3,7 +3,6 @@ const Bootcamp = require('../models/Bootcamp');
 const geocoder = require('../utils/geocoder');
 const ErrorResponse = require('../utils/ErrorResponse');
 const asyncHandler = require('../middleware/asyncHandler');
-
 /**
  * Fetch all the bootcamps
  * @desc        Get all bootcamps

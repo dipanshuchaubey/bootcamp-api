@@ -7,17 +7,20 @@ const {
   deleteCourse
 } = require('../controllers/courses');
 
+// Import protect route middleware
+const { protect } = require('../middleware/auth');
+
 const router = express.Router({ mergeParams: true });
 
 router
   .route('/')
   .get(getCourses)
-  .post(createCourse);
+  .post(protect, createCourse);
 
 router
   .route('/:id')
   .get(getSingleCourse)
-  .put(updateCourse)
-  .delete(deleteCourse);
+  .put(protect, updateCourse)
+  .delete(protect, deleteCourse);
 
 module.exports = router;
