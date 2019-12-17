@@ -50,6 +50,18 @@ exports.login = asyncHandler(async (req, res, next) => {
   sendResponseToken(user, 200, res);
 });
 
+/**
+ * @desc        Get currently logged in user
+ * @route       GET /api/v1/auth/me
+ * @access      Private
+ */
+
+exports.findMe = asyncHandler(async (req, res, next) => {
+  const me = req.user; // Validation of if me exists is already done
+
+  res.status(200).json({ success: true, data: me });
+});
+
 // Sign Jwt token, set cookie and send response token
 const sendResponseToken = (user, statusCode, res) => {
   // Sign JWT token

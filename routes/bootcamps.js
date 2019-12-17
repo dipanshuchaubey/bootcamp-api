@@ -19,7 +19,7 @@ const Bootcamp = require('../models/Bootcamp');
 const advancedResult = require('../middleware/advancedResult');
 
 // Import protect private router middleware
-const { protect } = require('../middleware/auth');
+const { protect, authorize } = require('../middleware/auth');
 
 // Re-router to other resource router
 router.use('/:bootcampId/courses', CoursesRouter);
@@ -33,16 +33,18 @@ router
     }),
     getBootcamps
   )
-  .post(protect, createBootcamp);
+  .post(protect, authorize('publisher', 'admin'), createBootcamp);
 
 router
   .route('/:id')
   .get(getBootcamp)
-  .put(protect, updateBootcamp)
-  .delete(protect, deleteBootcamp);
+  .put(protect, authorize('publisher', 'admin'), updateBootcamp)
+  .delete(protect, authorize('publisher', 'admin'), deleteBootcamp);
 
 router.route('/radius/:city/:distance').get(getBootcampsInRadius);
 
-router.route('/:id/photo').put(protect, uploadBootcampPhoto);
+router
+  .route('/:id/photo')
+  .put(protect, authorize('publisher', 'admin'), uploadBootcampPhoto);
 
 module.exports = router;
