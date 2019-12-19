@@ -64,6 +64,20 @@ exports.createCourse = asyncHandler(async (req, res, next) => {
     return next(new ErrorResponse('Bootcamp does not exists', 404));
   }
 
+  // Check if user is owner of bootcamp in which course
+  // is been added
+  if (bootcamp.user.toString() !== req.user.id && req.user.role !== 'admin') {
+    return next(
+      new ErrorResponse(
+        'You dont own the bootcamp in which you are trying to add the course',
+        403
+      )
+    );
+  }
+
+  // Add user field in course table
+  req.body.user = bootcamp.user;
+
   const course = await Course.create(req.body);
 
   res.status(201).json({ success: true, data: course });
@@ -76,14 +90,26 @@ exports.createCourse = asyncHandler(async (req, res, next) => {
  */
 
 exports.updateCourse = asyncHandler(async (req, res, next) => {
-  const course = await Course.findByIdAndUpdate(req.params.id, req.body, {
-    new: true,
-    runValidators: true
-  });
+  let course = await Course.findById(req.params.id);
 
   if (!course) {
     return next(new ErrorResponse('Course doest not exists', 404));
   }
+
+  // Check if user is owner of course
+  if (course.user.toString() !== req.user.id && req.user.role !== 'admin') {
+    return next(
+      new ErrorResponse(
+        'You dont own the course that you are trying to update',
+        403
+      )
+    );
+  }
+
+  course = await Course.findByIdAndUpdate(req.params.id, req.body, {
+    new: true,
+    runValidators: true
+  });
 
   res.status(201).json({ success: true, data: course });
 });
@@ -99,6 +125,16 @@ exports.deleteCourse = asyncHandler(async (req, res, next) => {
 
   if (!course) {
     return next(new ErrorResponse('Course does not exists', 404));
+  }
+
+  // Check if user is owner of course
+  if (course.user.toString() !== req.user.id && req.user.role !== 'admin') {
+    return next(
+      new ErrorResponse(
+        'You dont own the course that you are trying to update',
+        403
+      )
+    );
   }
 
   await course.remove();

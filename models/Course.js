@@ -11,6 +11,11 @@ const CourseSchema = new mongoose.Schema({
     type: String,
     required: [true, 'Please add a description']
   },
+  user: {
+    type: mongoose.Schema.ObjectId,
+    ref: 'User',
+    required: true
+  },
   weeks: {
     type: String,
     required: [true, 'Please add course duration']
