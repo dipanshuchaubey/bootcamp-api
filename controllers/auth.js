@@ -2,6 +2,8 @@ const User = require('../models/User');
 const asyncHandler = require('../middleware/asyncHandler');
 const ErrorResponse = require('../utils/ErrorResponse');
 const sendEmail = require('../utils/sendEmail');
+const crypto = require('crypto');
+const bcrypt = require('bcryptjs');
 
 /**
  * @desc        Regsiter a user
@@ -64,7 +66,56 @@ exports.findMe = asyncHandler(async (req, res, next) => {
 });
 
 /**
- * @desc        Reset forgot password
+ * @desc        Update user details
+ * @route       PUT /api/v1/auth/updatedetails
+ * @access      Private
+ */
+exports.updateDetails = asyncHandler(async (req, res, next) => {
+  // So that only these values can be changed
+  // And user will not be alter value of resetPasswordToken
+  const updateOptions = {
+    name: req.body.name,
+    email: req.body.email
+  };
+
+  const user = await User.findByIdAndUpdate(req.user.id, updateOptions, {
+    new: true,
+    runValidators: true
+  });
+
+  res.status(200).json({ success: true, data: user });
+});
+
+/**
+ * @desc        Update Password
+ * @route       PUT /api/v1/auth/updatepassword
+ * @access      Private
+ */
+exports.updatePassword = asyncHandler(async (req, res, next) => {
+  const { currentPassword, newPassword } = req.body;
+
+  if (!currentPassword || !newPassword) {
+    new ErrorResponse('Please enter current and new password', 400);
+  }
+
+  const user = await User.findById(req.user.id).select('+password');
+
+  // Check if entered current password is correct
+  if (!(await user.matchPassword(currentPassword))) {
+    return next(
+      new ErrorResponse('Entered password does not match current password', 401)
+    );
+  }
+
+  user.password = newPassword;
+
+  await user.save();
+
+  sendResponseToken(user, 200, res);
+});
+
+/**
+ * @desc        Forgot password
  * @route       POST /api/v1/auth/forgotpassword
  * @access      Public
  */
@@ -88,7 +139,7 @@ exports.forgotPassword = asyncHandler(async (req, res, next) => {
   const resetToken = user.getResetPasswordToken();
 
   // Save changes made to user
-  user.save({ validateBeforeSave: false });
+  await user.save({ validateBeforeSave: false });
 
   // Send email
   const resetUrl = `${req.protocol}://${req.get(
@@ -107,6 +158,48 @@ exports.forgotPassword = asyncHandler(async (req, res, next) => {
   res
     .status(200)
     .json({ success: true, data: 'Rest password email has been sent' });
+});
+
+/**
+ * @desc        Reset forgot password
+ * @route       POST /api/v1/auth/forgotpassword
+ * @access      Public
+ */
+
+exports.resetpassword = asyncHandler(async (req, res, next) => {
+  if (!req.body.password) {
+    return next(new ErrorResponse('Password not provided', 400));
+  }
+
+  // Hash token
+  const token = crypto
+    .createHash('sha256')
+    .update(req.params.token)
+    .digest('hex');
+
+  const user = await User.findOne({
+    resetPasswordToken: token,
+    resetPasswordExpire: { $gt: Date.now() }
+  });
+
+  if (!user) {
+    return next(new ErrorResponse('Invalid token', 401));
+  }
+
+  /**
+   *  Set new password
+   *  Set resetPasswordToken and resetPasswordExpire to undefined
+   *  Because we dont want them to populate our database
+   */
+  user.password = req.body.password;
+  user.resetPasswordToken = undefined;
+  user.resetPasswordExpire = undefined;
+
+  await user.save();
+
+  res
+    .status(200)
+    .json({ success: true, data: 'Password changed successfully' });
 });
 
 // Sign Jwt token, set cookie and send response token
