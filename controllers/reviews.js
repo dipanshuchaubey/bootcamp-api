@@ -10,9 +10,16 @@ const asyncHanlder = require('../middleware/asyncHandler');
  * @access      Public
  */
 exports.getAllReviews = asyncHanlder(async (req, res, next) => {
-  const reviews = await Review.find();
+  let query;
 
-  res.status(200).json({ success: true, data: reviews });
+  // If bootcampId is present in params
+  if (req.params.bootcampId) {
+    query = await Review.find({ bootcamp: req.params.bootcampId });
+  } else {
+    query = await Review.find();
+  }
+
+  res.status(200).json({ success: true, data: query });
 });
 
 /**
@@ -105,7 +112,7 @@ exports.deleteReview = asyncHanlder(async (req, res, next) => {
     );
   }
 
-  review = await Review.findByIdAndDelete(req.params.id);
+  await review.remove(req.params.id);
 
   res.status(200).json({
     success: true,
