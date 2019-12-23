@@ -15,9 +15,9 @@ exports.protect = asyncHandler(async (req, res, next) => {
   }
 
   // If token is passed as Cookie
-  // else if (req.cookies.token) {
-  //   token = req.cookies.token;
-  // }
+  if (req.cookies.token) {
+    token = req.cookies.token;
+  }
 
   // If no token is passed throw error
   if (!token) {

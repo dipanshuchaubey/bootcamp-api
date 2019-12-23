@@ -1,9 +1,11 @@
 const express = require('express');
 const dotenv = require('dotenv');
 const colors = require('colors');
+const path = require('path');
+const morgan = require('morgan');
+const helmet = require('helmet');
 const cookieParse = require('cookie-parser');
 const fileUpload = require('express-fileupload');
-const morgan = require('morgan');
 const errorHandler = require('./middleware/errorHandler');
 const connectDB = require('./config/db');
 
@@ -22,6 +24,9 @@ connectDB();
 
 const app = express();
 
+// Protect Middleware
+app.use(helmet());
+
 // Body Parser
 app.use(express.json());
 
@@ -35,6 +40,9 @@ if (process.env.NODE_ENV === 'development') {
 
 // File upload Middleware
 app.use(fileUpload());
+
+// Set Public Folder
+app.use(express.static(path.join(__dirname, 'public')));
 
 // Mount Router
 app.use('/api/v1/bootcamps', bootcamps);
