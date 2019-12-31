@@ -15,11 +15,10 @@ exports.getAllReviews = asyncHanlder(async (req, res, next) => {
   // If bootcampId is present in params
   if (req.params.bootcampId) {
     query = await Review.find({ bootcamp: req.params.bootcampId });
+    res.status(200).json({ success: true, data: query });
   } else {
-    query = await Review.find();
+    res.status(200).json(res.advancedResult);
   }
-
-  res.status(200).json({ success: true, data: query });
 });
 
 /**
