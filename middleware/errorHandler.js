@@ -10,7 +10,7 @@ const errorHandler = (err, req, res, next) => {
    * @desc valid ID but does not exsist in DB
    */
   if (error.name === 'CastError') {
-    const message = `Bootcamp not found with id : ${error.value}`;
+    const message = `Illegal argument`;
     error = new ErrorResponse(message, 404);
   }
 
