@@ -12,7 +12,7 @@
   "author": "Dipanshu",
   "license": "MIT",
   "dependencies": {
-    "axios": "^0.19.2",
+    "axios": "^0.24.0",
     "bcryptjs": "^2.4.3",
     "colors": "^1.4.0",
     "cookie-parser": "^1.4.4",
@@ -34,8 +34,8 @@
   },
   "devDependencies": {
     "@types/jest": "^25.2.1",
-    "jest": "^24.9.0",
+    "jest": "^27.4.5",
     "jsdoc": "^3.6.3",
-    "nodemon": "^1.19.4"
+    "nodemon": "^2.0.15"
   }
 }
