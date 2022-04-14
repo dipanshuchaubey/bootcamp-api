@@ -3,7 +3,7 @@ const axios = require('axios');
 test('should container bootcamp', async () => {
   expect.assertions(1);
   const data = await axios.get(
-    'https://bootcamper.ml/api/v1/bootcamps/5d713a66ec8f2b88b8f830b8'
+    'https://bootcamper.dipanshu.work/api/v1/bootcamps/5d713a66ec8f2b88b8f830b8'
   );
 
   expect(data.data.data.name).toEqual('ModernTech Bootcamp');
@@ -13,7 +13,7 @@ test('should contain a course', async () => {
   expect.assertions(1);
 
   const data = await axios.get(
-    'https://bootcamper.ml/api/v1/bootcamps/5d713a66ec8f2b88b8f830b8/courses/5d725cd2c4ded7bcb480eaa2'
+    'https://bootcamper.dipanshu.work/api/v1/bootcamps/5d713a66ec8f2b88b8f830b8/courses/5d725cd2c4ded7bcb480eaa2'
   );
 
   expect(data.data.data.title).toEqual('UI/UX');
@@ -29,7 +29,7 @@ test('Get current user should be restriced', async () => {
   let status;
 
   try {
-    await axios.get('https://bootcamper.ml/api/v1/auth/me');
+    await axios.get('https://bootcamper.dipanshu.work/api/v1/auth/me');
   } catch (err) {
     status = err.response.status;
   }
@@ -41,7 +41,7 @@ test('Register new user with NOT UNIQUE email', () => {
   expect.assertions(1);
 
   return axios
-    .post('https://bootcamper.ml/api/v1/auth/register', {
+    .post('https://bootcamper.dipanshu.work/api/v1/auth/register', {
       name: 'Rick Mick',
       email: 'rick@gmail.com',
       password: '123456',
